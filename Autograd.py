@@ -37,9 +37,6 @@ z.backward()
 
 # del z / del x
 
-print(x.grad)
-print(x/2)
-
 model = nn.Sequential(nn.Linear(784, 128),
                       nn.ReLU(),
                       nn.Linear(128, 64),
@@ -47,20 +44,84 @@ model = nn.Sequential(nn.Linear(784, 128),
                       nn.Linear(64, 10),
                       nn.LogSoftmax(dim=1))
 
-criterion = nn.NLLLoss()
 images, labels = next(iter(trainloader))
-images = images.view(images.shape[0], -1)
+images = images.view(images.shape[0], -1) # compress to [64, 764]
 
-logits = model(images)
-loss = criterion(logits, labels)
+# performing backpropagation
 
-print('Before backward pass: \n', model[0].weight.grad)
+from torch import optim
 
-loss.backward()
+print('Before backpropagation: - ', model[0].weight)
 
-print('After backward pass: \n', model[0].weight.grad)
+# input to the nn, size adjusted for nn
 
-print(model.parameters)
+images = images.view(images.shape[0], -1) # compress to [64, 764]
+
+# configuring optimizer to SGD
+
+optimizer = optim.SGD(model.parameters(), lr=0.1)
+
+# zero out the gradient
+
+optimizer.zero_grad()
+
+# getting the logit score
+
+logit = model(images)
+
+# calculating NLLLoss
+
+criterion = nn.NLLLoss()
+lost = criterion(logit, labels)
+
+# compute the gradient
+
+lost.backward()
+print('Gradient: - \n', model[0].weight.grad)
+
+# back propagate
+
+optimizer.step()
+
+print('After backpropagation: - ', model[0].weight)
+
+
+# ================================================== #
+
+epochs = 10
+
+
+for e in range(epochs):
+    running_loss = 0
+
+    for image, label in trainloader:
+
+        image = image.view(image.shape[0], -1)
+        optimizer.zero_grad()
+
+        logit = model(image)
+
+        loss = criterion(logit, label)
+        loss.backward()
+
+        optimizer.step()
+
+        running_loss += loss.item()
+    else:
+        print(f"Training loss: {running_loss/len(trainloader)}")
+
+import helper
+
+images, labels = next(iter(trainloader))
+
+img = images[0].view(1, 784)
+# Turn off gradients to speed up this part
+with torch.no_grad():
+    logps = model(img)
+
+# Output of the network are log-probabilities, need to take exponential for probabilities
+ps = torch.exp(logps)
+helper.view_classify(img.view(1, 28, 28), ps)
 
 
 
@@ -68,6 +129,30 @@ print(model.parameters)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
 
 
 

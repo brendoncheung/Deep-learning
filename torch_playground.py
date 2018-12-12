@@ -23,9 +23,16 @@ m = nn.Linear(1, 1)
 # input = torch.randn(128, 20)
 # output = m(input)
 
-print(m.weight)
+x = torch.randn((2,2), requires_grad=True)
 
+y = x ** 2
 
+z = y**3
+
+z.backward(torch.ones((2,2)))
+
+print(x.grad)
+print(6 * x * y**2)
 
 
 
