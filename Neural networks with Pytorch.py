@@ -104,6 +104,65 @@ ps = model2.forward(images[img_idx,:])
 img = images[img_idx]
 helper.view_classify(img.view(1, 28, 28), ps)
 
+print("printing weights")
+print(model2.fc_1.weight)
+
+# Using nn.Sequential
+
+input_size = 784
+hidden_size = [128, 64] # two layers, first one is 128 units, second is 64
+output_size = 10
+
+model3 = nn.Sequential(nn.Linear(input_size, hidden_size[0]),
+                        nn.ReLU(),
+                        nn.Linear(hidden_size[0], hidden_size[1]),
+                        nn.ReLU(),
+                        nn.Linear(hidden_size[1], input_size),
+                        nn.Softmax(dim=1))
+
+from collections import OrderedDict
+
+model4 = nn.Sequential(OrderedDict([
+('first_layer_L_T', nn.Linear(input_size, hidden_size[0])),
+('first_layer_activiation', nn.ReLU()),
+('second_layer_L_T', nn.Linear(hidden_size[0], hidden_size[1])),
+('second_layer_activiation', nn.ReLU()),
+('final_layer_L_T', nn.Linear(hidden_size[1], output_size)),
+('softmax', nn.Softmax(dim=1))]))
+
+print(model3)
+print(model4.first_layer_L_T.weight)
+
+criterion = nn.CrossEntropyLoss()
+
+images = images.view(images.shape[0], -1)
+
+logit = model3(images)
+
+loss = criterion(logit, labels)
+
+print(loss)
+
+print(labels.shape)
+
+model5 = nn.Sequential(nn.Linear(input_size, hidden_size[0]),
+                        nn.ReLU(),
+                        nn.Linear(hidden_size[0], hidden_size[1]),
+                        nn.ReLU(),
+                        nn.Linear(hidden_size[1], input_size),
+                        nn.LogSoftmax(dim=1))
+
+criterion2 = nn.NLLLoss()
+
+logit = model5(images)
+loss = criterion2(logit, labels)
+
+print(loss)
+print(torch.exp(logit) * 100)
+
+
+
+
 
 
 

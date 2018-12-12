@@ -30,4 +30,3 @@ b = torch.from_numpy(a)
 print(b)
 b.mul_(4)
 print(b)
-#ksjhdf 
