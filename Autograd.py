@@ -90,7 +90,6 @@ print('After backpropagation: - ', model[0].weight)
 
 epochs = 10
 
-
 for e in range(epochs):
     running_loss = 0
 

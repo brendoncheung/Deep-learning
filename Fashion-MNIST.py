@@ -77,20 +77,21 @@ import helper
 
 # Test out your network!
 
-dataiter = iter(trainloader)
-images, labels = dataiter.next()
-img = images[0]
-# Convert 2D image to 1D vector
-img = img.resize_(1, 784)
-
-# TODO: Calculate the class probabilities (softmax) for img
-ps = torch.exp(model(img))
-
-# Plot the image and probabilities
-helper.view_classify(img.resize_(1, 28, 28), ps, version='Fashion')
 
 
-
+def run_classifier():
+    
+    dataiter = iter(trainloader)
+    images, labels = dataiter.next()
+    img = images[0]
+    # Convert 2D image to 1D vector
+    img = img.resize_(1, 784)
+    
+    # TODO: Calculate the class probabilities (softmax) for img
+    ps = torch.exp(model(img))
+    
+    # Plot the image and probabilities
+    helper.view_classify(img.resize_(1, 28, 28), ps, version='Fashion')
 
 
 
